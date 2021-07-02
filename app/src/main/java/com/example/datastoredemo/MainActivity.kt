@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         initViews()
         clickAction()
         getSavedValue()
-
     }
 
     private fun initViews(){
@@ -58,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     private fun validation():Boolean{
         return when {
             et?.text!!.isEmpty() -> {
-                Toast.makeText(this, "Please Enter Notes", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Please Enter Content", Toast.LENGTH_LONG).show()
                 false
             }
             etId?.text!!.isEmpty() -> {
@@ -77,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch { myPref
                 .saveNotes(notes)}
 
-            val notesId = etId?.text.toString().toInt()
+            val notesId = etId?.text.toString().toLong()
             lifecycleScope.launch { myPref
                 .saveNotesId(notesId)}
 
