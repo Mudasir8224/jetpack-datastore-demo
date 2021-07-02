@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.lifecycle.Observer
+import android.widget.Toast
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -14,31 +14,79 @@ class MainActivity : AppCompatActivity() {
     private lateinit var myPref: MyPreference
     private var button:Button? = null
     private var et:EditText? = null
+    private var etId:EditText? = null
     private var tv:TextView? = null
+    private var tvId:TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initViews()
-        saveNotes()
+        clickAction()
+        getSavedValue()
+
     }
 
     private fun initViews(){
         myPref = MyPreference(this)
-        et = findViewById(R.id.et);
-        tv = findViewById(R.id.tv);
-        button = findViewById(R.id.button);
+        et = findViewById(R.id.et)
+        etId = findViewById(R.id.etId)
+        tv = findViewById(R.id.tv)
+        tvId = findViewById(R.id.tvId)
+        button = findViewById(R.id.button)
+
+    }
+
+    private fun getSavedValue(){
+        myPref.notes.asLiveData().observe(this, {
+            tv?.text = it
+        })
+
+        myPref.notesId.asLiveData().observe(this, {
+            tvId?.text = it.toString()
+        })
+    }
+
+    private fun clickAction(){
+        button?.setOnClickListener {
+            if (validation()){
+                saveNotes()
+            }
+        }
+    }
+
+    private fun validation():Boolean{
+        return when {
+            et?.text!!.isEmpty() -> {
+                Toast.makeText(this, "Please Enter Notes", Toast.LENGTH_LONG).show()
+                false
+            }
+            etId?.text!!.isEmpty() -> {
+                Toast.makeText(this, "Please Enter Id", Toast.LENGTH_LONG).show()
+                false
+            }
+            else -> {
+                true
+            }
+        }
     }
 
     private fun saveNotes(){
-        button?.setOnClickListener {
+
             val notes = et?.text.toString().trim()
             lifecycleScope.launch { myPref
                 .saveNotes(notes)}
-        }
 
-        myPref.notes.asLiveData().observe(this, Observer {
+            val notesId = etId?.text.toString().toInt()
+            lifecycleScope.launch { myPref
+                .saveNotesId(notesId)}
+
+        myPref.notes.asLiveData().observe(this, {
             tv?.text = it
+        })
+
+        myPref.notesId.asLiveData().observe(this, {
+            tvId?.text = it.toString()
         })
 
     }

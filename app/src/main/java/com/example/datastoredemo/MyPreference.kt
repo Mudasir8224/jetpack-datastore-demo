@@ -23,15 +23,26 @@ class MyPreference(context:Context) {
             preferences[KEY_NOTES]
         }
 
+    val notesId: Flow<Int?>
+        get() = dataStore.data.map { preferences ->
+            preferences[KEY_NOTES_ID]
+        }
+
     suspend fun saveNotes(notes:String){
         dataStore.edit { preferences ->
             preferences[KEY_NOTES] = notes
         }
     }
 
+    suspend fun saveNotesId(notesId:Int){
+        dataStore.edit { preferences ->
+            preferences[KEY_NOTES_ID] = notesId
+        }
+    }
 
     companion object {
         val KEY_NOTES = preferencesKey<String>("key_notes")
+        val KEY_NOTES_ID = preferencesKey<Int>("key_notes_id")
     }
 
 }
